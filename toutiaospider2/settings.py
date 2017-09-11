@@ -39,10 +39,29 @@ ROBOTSTXT_OBEY = False
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-#   'Accept-Language': 'en',
-#}
+DEFAULT_REQUEST_HEADERS = {
+    'Accept': 'application/json, text/javascript',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
+    'Connection': 'keep-alive',
+    'Content-Type':'application/x-www-form-urlencoded',
+    'Cookie': 'UM_distinctid=15e5218dc87aad-0b5d9c4e1b865a-31637e01-13c680-15e5218dc8898c; '
+              'uuid="w:782e1c2baa364b5a9182ab1db82cd42b"; sso_login_status=1; '
+              'login_flag=4ae747980cc1ea2aeed5bbc160a1dcc6; sessionid=de77a32f2bfbe22041254c98763ab48a; '
+              'uid_tt=90a4d8a43bcde6c1bad72e7dac306e7d; sid_tt=de77a32f2bfbe22041254c98763ab48a; '
+              'sid_guard="de77a32f2bfbe22041254c98763ab48a|1504960845|2591999|Mon\054 09-Oct-2017 12:40:44 GMT"; '
+              'csrftoken=366f1576bdbca99792e29482078adffc; WEATHER_CITY=%E5%8C%97%E4%BA%AC; '
+              '_ga=GA1.2.811560088.1504960981; _gid=GA1.2.2001402057.1504960981; '
+              '__tasessionId=mif033br41504959167322; CNZZDATA1259612802=253699115-1504612769-%7C1504958369; '
+              '__utma=24953151.811560088.1504960981.1504961568.1504961568.1; __utmb=24953151.3.10.1504961568; '
+              '__utmc=24953151; __utmz=24953151.1504961568.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); '
+              'tt_webid=6462276125040985613',
+    'Host': 'www.toutiao.com',
+    'Referer': 'http://www.toutiao.com',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/60.0.3112.113 Safari/537.36',
+    'X-Requested-With': 'XMLHttpRequest'
+}
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
