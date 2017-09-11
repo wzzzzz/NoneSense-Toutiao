@@ -47,11 +47,11 @@ class TouTiaoSpider(Spider):
                         article_base_url = 'http://www.toutiao.com/api/comment/list/?'
                         article_url = article_base_url + urllib.parse.urlencode(article_request)
                         request = Request(article_url, callback=self.parse_comment, method='GET')
-                        request.meta['article_title'] = (article['title'] if 'title' in article else '')
-                        request.meta['article_content'] = (article['abstract'] if 'bastract' in article else '')
-                        request.meta['article_keywords'] = (article['label'] if 'label' in article else '')
+                        request.meta['associate_article_title'] = (article['title'] if 'title' in article else '')
+                        request.meta['associate_article_content'] = (article['abstract'] if 'bastract' in article else '')
+                        request.meta['associate_article_keywords'] = (article['label'] if 'label' in article else '')
                         request.meta['article_url'] = (article['source_url'] if 'source_url' in article else '')
-                        request.meta['comment_reply_to_id'] = ''
+                        request.meta['reply_to_id'] = ''
                         yield request
                         # yield Request(follow_up_request, callback=self.parse, method='GET')
         else:
@@ -62,14 +62,47 @@ class TouTiaoSpider(Spider):
         if comments_json['message'] == 'success':
             comments = comments_json['data']['comments']
             if len(comments) > 0:
+                items = []
                 for comment in comments:
                     item = CommentInfo(
                         {'comment': comment['text'], 'likes': comment['digg_count'], 'time': comment['create_time'],
-                         'comment_id': comment['id'], 'reply_to_id': response.meta['comment_reply_to_id'],
-                         'associate_article_title': response.meta['article_title'],
-                         'associate_article_content': response.meta['article_content'],
-                         'associate_article_keywords': response.meta['article_keywords']})
-                    # comment['reply_count']
-                    return item
+                         'comment_id': comment['id']})
+                    self.copy_article_info(response.meta, item)
+
+                    if comment['reply_count'] > 0:
+                        reply_to_comment_url = 'http://www.toutiao.com/api/comment/get_reply/?comment_id=' + str(comment['id']) + '&dongtai_id=' + str(comment['dongtai_id']) + '&offset=0&count=' + str(comment['reply_count'])
+                        reply_request = Request(reply_to_comment_url, callback=self.parse_reply, method='GET')
+                        self.copy_article_info(response.meta, reply_request.meta)
+                        reply_request.meta['reply_to_id'] = comment['id']
+                        yield reply_request
+
+                    items.append(item)
+                return items
         else:
             return
+
+
+    def parse_reply(self, response):
+        replies_json = json.loads(response.body_as_unicode())
+        if replies_json['message'] == 'success':
+            replies = replies_json['data']['data']
+            if len(replies) > 0:
+                items = []
+                for reply in replies:
+                    item = CommentInfo({
+                        'comment': reply['text'], 'likes': reply['digg_count'], 'time': reply['create_time'],
+                        'comment_id': reply['id']})
+                    self.copy_article_info(response.meta, item)
+                    items.append(item)
+                return items
+        else:
+            return
+
+
+    def copy_article_info(self, source, destination):
+
+        destination.setdefault('reply_to_id', source['reply_to_id'])
+        destination.setdefault('associate_article_title', source['associate_article_title'])
+        destination.setdefault('associate_article_content', source['associate_article_content'])
+        destination.setdefault('associate_article_keywords', source['associate_article_keywords'])
+
